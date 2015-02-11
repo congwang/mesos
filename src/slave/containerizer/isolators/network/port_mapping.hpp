@@ -23,6 +23,7 @@
 
 #include <sys/types.h>
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -197,6 +198,7 @@ private:
     const Interval<uint16_t> ephemeralPorts;
 
     Option<pid_t> pid;
+    Option<uint16_t> flowId;
   };
 
   // Define the metrics used by the port mapping network isolator.
@@ -207,6 +209,8 @@ private:
 
     process::metrics::Counter adding_eth0_ip_filters_errors;
     process::metrics::Counter adding_eth0_ip_filters_already_exist;
+    process::metrics::Counter adding_eth0_egress_filters_errors;
+    process::metrics::Counter adding_eth0_egress_filters_already_exist;
     process::metrics::Counter adding_lo_ip_filters_errors;
     process::metrics::Counter adding_lo_ip_filters_already_exist;
     process::metrics::Counter adding_veth_ip_filters_errors;
@@ -221,6 +225,8 @@ private:
     process::metrics::Counter adding_eth0_arp_filters_already_exist;
     process::metrics::Counter removing_eth0_ip_filters_errors;
     process::metrics::Counter removing_eth0_ip_filters_do_not_exist;
+    process::metrics::Counter removing_eth0_egress_filters_errors;
+    process::metrics::Counter removing_eth0_egress_filters_do_not_exist;
     process::metrics::Counter removing_lo_ip_filters_errors;
     process::metrics::Counter removing_lo_ip_filters_do_not_exist;
     process::metrics::Counter removing_veth_ip_filters_errors;
@@ -249,7 +255,8 @@ private:
       const hashmap<std::string, std::string>& _hostNetworkConfigurations,
       const Option<Bytes>& _egressRateLimitPerContainer,
       const IntervalSet<uint16_t>& _managedNonEphemeralPorts,
-      const process::Owned<EphemeralPortsAllocator>& _ephemeralPortsAllocator)
+      const process::Owned<EphemeralPortsAllocator>& _ephemeralPortsAllocator,
+      const std::set<uint16_t>& _flowIDs)
     : flags(_flags),
       eth0(_eth0),
       lo(_lo),
@@ -260,11 +267,13 @@ private:
       hostNetworkConfigurations(_hostNetworkConfigurations),
       egressRateLimitPerContainer(_egressRateLimitPerContainer),
       managedNonEphemeralPorts(_managedNonEphemeralPorts),
-      ephemeralPortsAllocator(_ephemeralPortsAllocator) {}
+      ephemeralPortsAllocator(_ephemeralPortsAllocator),
+      freeFlowIds(_flowIDs) {}
 
   // Continuations.
   Try<Nothing> _cleanup(Info* info, const Option<ContainerID>& containerId);
   Try<Info*> _recover(pid_t pid);
+  Try<Nothing> recoverFlowIds();
 
   void _update(
       const ContainerID& containerId,
@@ -279,8 +288,11 @@ private:
       const process::Future<std::string>& out);
 
   // Helper functions.
+  uint16_t getNextFlowId();
+
   Try<Nothing> addHostIPFilters(
       const routing::filter::ip::PortRange& range,
+      const uint16_t& flowId,
       const std::string& veth);
 
   Try<Nothing> removeHostIPFilters(
@@ -313,6 +325,8 @@ private:
   const IntervalSet<uint16_t> managedNonEphemeralPorts;
 
   process::Owned<EphemeralPortsAllocator> ephemeralPortsAllocator;
+
+  std::set<uint16_t> freeFlowIds;
 
   hashmap<ContainerID, Info*> infos;
 
