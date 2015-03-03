@@ -38,6 +38,15 @@ public:
     handle = (((uint32_t) primary) << 16) + secondary;
   }
 
+  Handle(Handle parent, uint16_t flowid)
+  {
+    handle = (((uint32_t) parent.primary()) << 16) + flowid;
+  }
+
+  uint16_t primary() const { return handle >> 16; }
+
+  uint16_t secondary() const { return handle & 0x0000ffff; }
+
   uint32_t get() const { return handle; }
 
 private:

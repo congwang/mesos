@@ -518,6 +518,22 @@ Try<bool> create(
           terminal));
 }
 
+Try<bool> create(
+    const string& link,
+    const queueing::Handle& parent,
+    const Classifier& classifier,
+    const Option<Priority>& priority,
+    const Option<queueing::Handle>& flowid)
+{
+  return internal::create(
+      link,
+      Filter<Classifier>(
+          parent,
+          classifier,
+          priority,
+          None(),
+          flowid));
+}
 
 Try<bool> remove(
     const string& link,

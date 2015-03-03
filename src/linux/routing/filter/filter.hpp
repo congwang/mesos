@@ -59,6 +59,18 @@ public:
       priority_(_priority),
       handle_(_handle) {}
 
+  // Creates a filter with specified classid.
+  Filter(const queueing::Handle& _parent,
+         const Classifier& _classifier,
+         const Option<Priority>& _priority,
+         const Option<Handle>& _handle,
+         const Option<queueing::Handle>& _classid)
+    : parent_(_parent),
+      classifier_(_classifier),
+      priority_(_priority),
+      handle_(_handle),
+      classid_(_classid) {}
+
   // TODO(jieyu): Support arbitrary number of actions.
   template <typename Action>
   Filter(const queueing::Handle& _parent,
@@ -85,6 +97,7 @@ public:
   const Classifier& classifier() const { return classifier_; }
   const Option<Priority>& priority() const { return priority_; }
   const Option<Handle>& handle() const { return handle_; }
+  const Option<queueing::Handle>& classid() const { return classid_; }
 
   // Returns all the actions attached to this filter.
   const std::vector<process::Shared<action::Action>>& actions() const
@@ -105,6 +118,21 @@ private:
 
   // The handle of this filter.
   Option<Handle> handle_;
+
+  // The classid of this filter.
+  //
+  // Note: the classid can be used for two purposes:
+  // 1) For a classful qdisc, set the class id which refers
+  //    to a TC class;
+  // 2) For a classless qdisc, set the flow id which refers
+  //    to a flow defined by its parent qdisc.
+  // In both cases, the primary portion of a classid refers
+  // to its parent qdisc, the secondary portion refers to
+  // either its child qdisc or a flow.
+  //
+  // Here we only use the 2) case for flow classification,
+  // so we use flowid exchangeably with classid.
+  Option<queueing::Handle> classid_;
 
   // The set of actions attached to this filer. Note that we use
   // Shared here to make Filter copyable.
