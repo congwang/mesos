@@ -59,6 +59,7 @@ nobase_include_HEADERS =		\
   stout/os/fork.hpp			\
   stout/os/killtree.hpp			\
   stout/os/linux.hpp			\
+  stout/os/perf.hpp			\
   stout/os/posix/close.hpp		\
   stout/os/posix/exists.hpp		\
   stout/os/posix/fcntl.hpp		\
