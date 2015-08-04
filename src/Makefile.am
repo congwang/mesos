@@ -523,6 +523,7 @@ if OS_LINUX
   libmesos_no_3rdparty_la_SOURCES += linux/cgroups.cpp
   libmesos_no_3rdparty_la_SOURCES += linux/fs.cpp
   libmesos_no_3rdparty_la_SOURCES += linux/perf.cpp
+  libmesos_no_3rdparty_la_SOURCES += linux/trace_event.cpp
   libmesos_no_3rdparty_la_SOURCES += slave/containerizer/isolators/cgroups/cpushare.cpp
   libmesos_no_3rdparty_la_SOURCES += slave/containerizer/isolators/cgroups/mem.cpp
   libmesos_no_3rdparty_la_SOURCES += slave/containerizer/isolators/cgroups/perf_event.cpp
@@ -599,6 +600,7 @@ libmesos_no_3rdparty_la_SOURCES +=					\
 	linux/fs.hpp							\
 	linux/ns.hpp							\
 	linux/perf.hpp							\
+	linux/trace_event.hpp						\
 	local/flags.hpp							\
 	local/local.hpp							\
 	logging/flags.hpp						\
