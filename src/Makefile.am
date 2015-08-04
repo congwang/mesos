@@ -599,7 +599,6 @@ libmesos_no_3rdparty_la_SOURCES +=					\
 	linux/fs.hpp							\
 	linux/ns.hpp							\
 	linux/perf.hpp							\
-	linux/sched.hpp							\
 	local/flags.hpp							\
 	local/local.hpp							\
 	logging/flags.hpp						\
@@ -1560,7 +1559,6 @@ if OS_LINUX
   mesos_tests_SOURCES += tests/containerizer/memory_pressure_tests.cpp
   mesos_tests_SOURCES += tests/containerizer/ns_tests.cpp
   mesos_tests_SOURCES += tests/containerizer/perf_tests.cpp
-  mesos_tests_SOURCES += tests/containerizer/sched_tests.cpp
   mesos_tests_SOURCES += tests/containerizer/setns_test_helper.cpp
 endif
 
